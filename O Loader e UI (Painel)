@@ -1,0 +1,179 @@
+-- [[ HORIZON LAUNCHER - UI & CONNECTION ]] --
+
+-- > COLOQUE SEU LINK DO GITHUB AQUI (RAW LINK) < --
+-- Exemplo: "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/HorizonCore.lua"
+local GithubURL = "" 
+
+-- Verifica se tem link, se não tiver, avisa (para testes locais, você pode colar o Core em cima)
+local CoreSystem
+if GithubURL == "" then
+	warn("⚠️ ADICIONE O LINK RAW DO GITHUB NO SCRIPT! (Modo Teste: Funções vazias)")
+	CoreSystem = { -- Placeholder para não dar erro sem link
+		ToggleFly = function() return false end, ToggleNoclip = function() return false end,
+		ToggleESP_Players = function() return false end, ToggleESP_Items = function() return false end,
+		SetFlySpeed = function() end, SetWalkSpeed = function() end, ToggleFullBright = function() end
+	}
+else
+	-- Carrega o Script da Nuvem
+	local success, result = pcall(function()
+		return loadstring(game:HttpGet(GithubURL))()
+	end)
+	if success then
+		CoreSystem = result
+		print("✅ Horizon Core carregado com sucesso!")
+	else
+		error("❌ Falha ao conectar no GitHub: " .. tostring(result))
+		return
+	end
+end
+
+-- [[ CONSTRUÇÃO DA INTERFACE (VISUAL APENAS) ]] --
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInput = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+local sg = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+sg.Name = "HorizonInterface"
+sg.ResetOnSpawn = false
+
+-- Variáveis de Design
+local Colors = {
+	Bg = Color3.fromRGB(15, 15, 15),
+	Accent = Color3.fromRGB(0, 255, 180),
+	Text = Color3.fromRGB(240, 240, 240),
+	BtnOff = Color3.fromRGB(35, 35, 35),
+	BtnOn = Color3.fromRGB(0, 180, 120)
+}
+
+-- 1. Botão Flutuante (Toggle)
+local toggleBtn = Instance.new("TextButton", sg)
+toggleBtn.Size = UDim2.new(0, 45, 0, 45)
+toggleBtn.Position = UDim2.new(0, 15, 0.5, -22)
+toggleBtn.BackgroundColor3 = Colors.Bg
+toggleBtn.Text = "H"
+toggleBtn.TextColor3 = Colors.Accent
+toggleBtn.Font = Enum.Font.GothamBlack
+toggleBtn.TextSize = 22
+Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", toggleBtn).Color = Colors.Accent
+
+-- 2. Painel Principal (Horizontal)
+local main = Instance.new("Frame", sg)
+main.Size = UDim2.new(0, 580, 0, 250)
+main.Position = UDim2.new(0.5, -290, 0.5, -125)
+main.BackgroundColor3 = Colors.Bg
+main.BackgroundTransparency = 0.05
+main.Visible = false
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+
+-- Borda RGB Animada
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 2
+stroke.Color = Colors.Accent
+task.spawn(function()
+	while main.Parent do
+		TweenService:Create(stroke, TweenInfo.new(2), {Color = Color3.fromRGB(170, 0, 255)}):Play()
+		task.wait(2)
+		TweenService:Create(stroke, TweenInfo.new(2), {Color = Colors.Accent}):Play()
+		task.wait(2)
+	end
+end)
+
+-- Título
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, -20, 0, 35)
+title.Position = UDim2.new(0, 15, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "HORIZON // CLOUD CONNECTED"
+title.TextColor3 = Colors.Text
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Grid de Botões
+local gridC = Instance.new("Frame", main)
+gridC.Size = UDim2.new(1, -30, 1, -60)
+gridC.Position = UDim2.new(0, 15, 0, 50)
+gridC.BackgroundTransparency = 1
+
+local layout = Instance.new("UIGridLayout", gridC)
+layout.CellSize = UDim2.new(0, 130, 0, 45)
+layout.CellPadding = UDim2.new(0, 10, 0, 10)
+
+-- Função Fábrica de Botões
+local function CreateButton(name, callback)
+	local btn = Instance.new("TextButton", gridC)
+	btn.BackgroundColor3 = Colors.BtnOff
+	btn.Text = name
+	btn.TextColor3 = Colors.Text
+	btn.Font = Enum.Font.GothamMedium
+	btn.TextSize = 13
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	
+	btn.MouseButton1Click:Connect(function()
+		local isActive = callback() -- Chama a função do Core
+		
+		-- Animação
+		if isActive == true then
+			TweenService:Create(btn, TweenInfo.new(0.3), {BackgroundColor3 = Colors.BtnOn}):Play()
+		elseif isActive == false then
+			TweenService:Create(btn, TweenInfo.new(0.3), {BackgroundColor3 = Colors.BtnOff}):Play()
+		else
+			-- Clique momentâneo (sem estado on/off)
+			TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundColor3 = Colors.Accent}):Play()
+			task.wait(0.1)
+			TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Colors.BtnOff}):Play()
+		end
+	end)
+end
+
+-- [[ CONEXÃO UI -> CORE ]] --
+-- Aqui conectamos os botões às funções importadas do GitHub
+
+CreateButton("FLY", function() return CoreSystem.ToggleFly() end)
+CreateButton("NOCLIP", function() return CoreSystem.ToggleNoclip() end)
+CreateButton("ESP PLAYERS", function() return CoreSystem.ToggleESP_Players() end)
+CreateButton("ESP ITENS", function() return CoreSystem.ToggleESP_Items() end)
+CreateButton("FULL BRIGHT", function() CoreSystem.ToggleFullBright() return nil end)
+
+-- Inputs (Velocidade)
+local function CreateInput(placeholder, callback)
+	local container = Instance.new("Frame", gridC)
+	container.BackgroundColor3 = Color3.fromRGB(25,25,25)
+	Instance.new("UICorner", container).CornerRadius = UDim.new(0,6)
+	
+	local box = Instance.new("TextBox", container)
+	box.Size = UDim2.new(1, 0, 1, 0)
+	box.BackgroundTransparency = 1
+	box.Text = ""
+	box.PlaceholderText = placeholder
+	box.TextColor3 = Colors.Text
+	box.Font = Enum.Font.Gotham
+	
+	box.FocusLost:Connect(function()
+		callback(box.Text)
+	end)
+end
+
+CreateInput("Walk Speed...", function(val) CoreSystem.SetWalkSpeed(val) end)
+CreateInput("Fly Speed...", function(val) CoreSystem.SetFlySpeed(val) end)
+
+-- Lógica de Janela
+toggleBtn.MouseButton1Click:Connect(function()
+	main.Visible = not main.Visible
+end)
+
+-- Draggable
+local dragging, dragStart, startPos
+main.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true; dragStart = input.Position; startPos = main.Position
+	end
+end)
+UserInput.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+main.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
