@@ -2,7 +2,7 @@
 
 -- > COLOQUE SEU LINK DO GITHUB AQUI (RAW LINK) < --
 -- Exemplo: "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/HorizonCore.lua"
-local GithubURL = "" 
+local GithubURL = "https://raw.githubusercontent.com/kauericardo159-hub/ScriptHackRblx/refs/heads/main/HorizonCore.lua" 
 
 -- Verifica se tem link, se não tiver, avisa (para testes locais, você pode colar o Core em cima)
 local CoreSystem
