@@ -1,58 +1,83 @@
 (function() {
-    const styleId = 'gemini-pro-ui';
+    // 1. Criar e Exibir a Tela de Carregamento
+    const loader = document.createElement('div');
+    loader.id = 'gemini-custom-loader';
+    loader.innerHTML = `
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>Aplicando Design Premium...</p>
+        </div>
+    `;
+    document.body.appendChild(loader);
+
+    // 2. CSS do Loader e da Nova UI
+    const styleId = 'gemini-ultimate-ui';
     if (document.getElementById(styleId)) document.getElementById(styleId).remove();
 
     const css = `
-        /* 1. Ajuste Geral dos Balões */
-        ms-user-query, .user-query-container {
+        /* TELA DE CARREGAMENTO */
+        #gemini-custom-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1e1e2e; color: white; z-index: 99999;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #313244;
+            border-top: 5px solid #89b4fa; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* MUDANÇA TOTAL DE DESIGN */
+        body, .chat-history, main, .md-content {
+            background-color: #11111b !important; /* Dark Mode profundo */
+        }
+
+        /* BALÃO DO USUÁRIO + FOTO */
+        .user-query-container, [data-test-id="user-query"] {
             display: flex !important;
-            flex-direction: row-reverse !important; /* Foto na Direita */
-            align-items: flex-end !important;
-            margin-bottom: 25px !important;
-            gap: 12px !important;
+            flex-direction: row-reverse !important;
+            align-items: center !important;
+            gap: 15px !important;
+            margin: 20px 0 !important;
         }
 
-        /* 2. O Balão do Usuário (Você) */
-        .query-content, [data-test-id="user-query"] {
-            background: linear-gradient(135deg, #1a73e8, #0d47a1) !important;
-            color: white !important;
-            border-radius: 20px 20px 4px 20px !important;
-            padding: 12px 18px !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-            max-width: 80% !important;
+        .query-content {
+            background: linear-gradient(135deg, #89b4fa, #b4befe) !important;
+            color: #11111b !important;
+            border-radius: 20px 20px 0px 20px !important;
+            padding: 15px 25px !important;
+            box-shadow: 0 8px 24px rgba(137, 180, 250, 0.2) !important;
+            font-weight: 500 !important;
         }
 
-        /* 3. A FOTO DE PERFIL (O CLONE) */
-        /* O script identifica a imagem da conta Google e a estiliza */
+        /* FOTO DE PERFIL (CLONE) */
         img[src*="googleusercontent.com"], .user-avatar {
-            width: 40px !important;
-            height: 40px !important;
+            width: 50px !important;
+            height: 50px !important;
             border-radius: 50% !important;
-            border: 2px solid #fff !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
-            display: block !important;
+            border: 3px solid #89b4fa !important;
+            transition: transform 0.3s ease;
         }
 
-        /* 4. Balão do Gemini (Resposta) */
+        /* BALÃO DO GEMINI */
         .model-response-container {
-            display: flex !important;
-            flex-direction: row !important; /* Foto/Ícone na Esquerda */
-            align-items: flex-end !important;
-            gap: 12px !important;
-            margin-bottom: 25px !important;
+            background: #181825 !important;
+            border-radius: 20px 20px 20px 0px !important;
+            border: 1px solid #313244 !important;
+            padding: 20px !important;
+            color: #cdd6f4 !important;
+            margin: 15px 0 !important;
         }
 
-        .model-response-text {
-            background: #ffffff !important;
-            color: #202124 !important;
-            border-radius: 20px 20px 20px 4px !important;
-            padding: 15px !important;
-            border: 1px solid #dadce0 !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+        /* BARRA DE DIGITAÇÃO */
+        .input-area, .chat-input-container {
+            background: #313244 !important;
+            border-radius: 40px !important;
+            border: 1px solid #45475a !important;
         }
-
-        /* Remove linhas divisórias feias */
-        .conversation-container { border: none !important; }
     `;
 
     const styleSheet = document.createElement("style");
@@ -60,5 +85,10 @@
     styleSheet.innerText = css;
     document.head.appendChild(styleSheet);
 
-    console.log("Interface Gemini Luxo Ativada! 🚀");
+    // 3. Remover o Loader após 2.5 segundos
+    setTimeout(() => {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.remove(), 500);
+    }, 2500);
+
 })();
