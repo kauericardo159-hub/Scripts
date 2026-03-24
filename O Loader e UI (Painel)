@@ -1,65 +1,58 @@
 (function() {
-    const styleId = 'gemini-ultra-design';
+    const styleId = 'gemini-pro-ui';
     if (document.getElementById(styleId)) document.getElementById(styleId).remove();
 
     const css = `
-        /* 1. Fundo e Chat */
-        .chat-history, .conversation-container, main {
-            background-color: #f8f9fa !important; /* Um cinza bem clarinho elegante */
-        }
-
-        /* 2. Balão do Usuário (Você) */
-        .user-query-container {
+        /* 1. Ajuste Geral dos Balões */
+        ms-user-query, .user-query-container {
             display: flex !important;
-            flex-direction: row-reverse !important; /* Foto na direita */
-            align-items: center !important;
-            gap: 15px !important;
-            padding: 20px !important;
-            margin: 15px 0 !important;
+            flex-direction: row-reverse !important; /* Foto na Direita */
+            align-items: flex-end !important;
+            margin-bottom: 25px !important;
+            gap: 12px !important;
         }
 
-        .query-content {
-            background: #ffffff !important;
-            border-radius: 20px 20px 0px 20px !important; /* Pontinha charmosa */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-            border: 1px solid #e0e0e0 !important;
-            padding: 15px 20px !important;
-            color: #333 !important;
+        /* 2. O Balão do Usuário (Você) */
+        .query-content, [data-test-id="user-query"] {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1) !important;
+            color: white !important;
+            border-radius: 20px 20px 4px 20px !important;
+            padding: 12px 18px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            max-width: 80% !important;
         }
 
-        /* 3. A Foto de Perfil (Clonando a do Google) */
-        .user-query-container img, .user-avatar, img[src*="googleusercontent"] {
-            width: 45px !important;
-            height: 45px !important;
+        /* 3. A FOTO DE PERFIL (O CLONE) */
+        /* O script identifica a imagem da conta Google e a estiliza */
+        img[src*="googleusercontent.com"], .user-avatar {
+            width: 40px !important;
+            height: 40px !important;
             border-radius: 50% !important;
-            border: 2px solid #4285f4 !important;
-            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3) !important;
+            border: 2px solid #fff !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+            display: block !important;
         }
 
-        /* 4. Balão do Gemini */
+        /* 4. Balão do Gemini (Resposta) */
         .model-response-container {
             display: flex !important;
-            flex-direction: row !important; /* Foto na esquerda */
-            align-items: flex-start !important;
-            gap: 15px !important;
-            background: transparent !important;
-            padding: 20px !important;
+            flex-direction: row !important; /* Foto/Ícone na Esquerda */
+            align-items: flex-end !important;
+            gap: 12px !important;
+            margin-bottom: 25px !important;
         }
 
         .model-response-text {
-            background: #4285f4 !important; /* Azul Google */
-            color: white !important;
-            border-radius: 20px 20px 20px 0px !important;
-            padding: 15px 20px !important;
-            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.2) !important;
+            background: #ffffff !important;
+            color: #202124 !important;
+            border-radius: 20px 20px 20px 4px !important;
+            padding: 15px !important;
+            border: 1px solid #dadce0 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
         }
 
-        /* Esconde elementos desnecessários para um visual limpo */
-        .chat-input-container {
-            border-radius: 30px !important;
-            border: 2px solid #eee !important;
-            margin-bottom: 20px !important;
-        }
+        /* Remove linhas divisórias feias */
+        .conversation-container { border: none !important; }
     `;
 
     const styleSheet = document.createElement("style");
@@ -67,5 +60,5 @@
     styleSheet.innerText = css;
     document.head.appendChild(styleSheet);
 
-    console.log("Design Premium Ativado! ✨");
+    console.log("Interface Gemini Luxo Ativada! 🚀");
 })();
